@@ -1,17 +1,24 @@
-<template functional>
+<template>
     <div class='push-item'>
         <div class='imgBox'>
-            <img :src="props.info.picUrl" alt="">
-            <span class='playCount'><img class='counts-icon' src="../../../assets/images/erji.svg" alt=""> {{(props.info.playCount/10000).toString().slice(0,3)}}万</span>
+            <img :src="info.picUrl" alt="">
+            <span class='playCount'><img class='count-icon' src="../../../assets/images/erji.svg" alt=""> {{info.playCount|stringCount}}万</span>
         </div>
-        <p class='infoName'>{{props.info.name}}</p>
+        <p class='infoName'>{{info.name}}</p>
     </div>
 </template>
 
 <script>
 
 export default {
-    name:'HomePushItem'
+    name:'HomePushItem',
+    props:['info'],
+    filters:{
+        stringCount(count){//40010368-->4001.0万
+            let _count = (count/10000).toString().split('.');
+            return _count[1][0]==='0'?_count[0]:_count[0]+'.'+_count[1][0];
+        }
+    }
 }
 
 </script>
@@ -35,7 +42,7 @@ export default {
 				top:5px;
 				font-size:12px;
 				color:#fff;
-				.counts-icon{
+				.count-icon{
 					width: 13px;
 					height:13px;
 					transform:translateY(10%);

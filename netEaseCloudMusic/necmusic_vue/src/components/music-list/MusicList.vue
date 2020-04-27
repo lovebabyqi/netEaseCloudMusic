@@ -6,7 +6,7 @@
 		<div class="music-info">
 			<div class="left">
 				<div class="music-name">
-					<span>{{songInfo.name}}</span><span class='desc'>{{songInfo.desc}}</span>
+					<span class='name'>{{songInfo.name}}</span><span class='desc'>{{songInfo.desc}}</span>
 				</div>
 				<div class='music-singer'>
 					<span class='u-vip' v-show='+(songInfo.status)===0'></span>
@@ -63,18 +63,21 @@
 			border-bottom:1px solid rgba(0,0,0,.1);
 			.left {
 				.music-name {
-					/* display:inline-block; */
-					box-sizing:border-box;
+                    box-sizing:border-box;
 					width:350px;
-					padding-right:25px;
+					padding-right:65px;
 					height: 25px;
 					font-size: 17px;
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
-			
+                    .name{
+                        width:350px;
+                        overflow:hidden;
+                    }
 					.desc {
-						color: #888888;
+                        color: #888888;
+                        overflow:hidden;
 					}
 				}
 			
@@ -82,7 +85,9 @@
 					height: 18px;
 					font-size: 12px;
 					color: #888888;
-			
+                    overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
 					.u-vip {
 						padding-top: 8px;
 						display: inline-block;

@@ -1,6 +1,7 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/home/Home.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+const Home = ()=>import(/*webpackChunkName:'home'*/'../views/home/Home.vue')
+const SongList = ()=>import(/*webpackChunkName:'songList'*/'../views/songList/SongList.vue')
 
 Vue.use(VueRouter)
 
@@ -14,7 +15,13 @@ const routes = [
     name: 'Home',
     component: Home,
     meta:{index:0}
-  }
+  },
+  {
+    path: '/songList',
+    name: 'SongList',
+    component: SongList,
+    meta:{index:1}
+  },
 ]
 
 const router = new VueRouter({

@@ -62,6 +62,7 @@ export default {
   overflow-y: scroll;
   .fade {
     position: absolute;
+    width:100vw;
   }
   .left-leave-active{
         transform:translateX(0px);

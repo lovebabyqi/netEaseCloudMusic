@@ -4,7 +4,7 @@
       <span>推荐歌单</span>
     </div>
     <div class="push-list">
-      <home-push-item v-for="item in pushList" :key="item.id" :info="item"></home-push-item>
+      <home-push-item v-for="item in pushList" :key="item.id" :info="item" @click.native='goPlayList(item.id)'></home-push-item>
     </div>
     <div class="home-title">
       <span>最新音乐</span>
@@ -46,8 +46,17 @@ export default {
       });
       this.newSongList = Object.freeze(showNewSongList); //不需要响应式
     },
-    goPlayer(id){
+    goPlayer(id){//播放单曲
         console.log(id)
+    },
+    goPlayList(listId){//打开歌单
+        this.$router.push({
+            path:'/songList',
+            query:{listId:listId},
+            params:{
+                listId
+            }
+        })
     }
   },
   components: {

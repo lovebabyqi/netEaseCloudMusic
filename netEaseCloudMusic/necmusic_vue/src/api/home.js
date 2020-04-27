@@ -17,3 +17,4 @@ export const reqSearchSuggest = (keywords)=>request('/search/suggest',{keywords}
 
 //关键词搜歌 可以是歌名
 export const reqSearchSongs = (keywords)=>request('/search',keywords);
+
