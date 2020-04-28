@@ -6,7 +6,7 @@
       <span class="icon">歌单</span>
       <span class="count">
         <img class="count-icon" src="../../../assets/images/erji.svg" alt />
-        {{playListInfo.playCount|stringCount}}万
+        {{playListInfo.playCount|stringCount}}
       </span>
     </div>
     <div class="header-right">
@@ -29,9 +29,17 @@ export default {
   },
   filters: {
     stringCount(count) {
-      //40010368-->4001.0万
-      let _count = (count / 10000).toString().split(".");
-      return _count[1][0] === "0" ? _count[0] : _count[0] + "." + _count[1][0];
+       if (count > 100000000) {
+        let _count = (count / 100000000).toString().split(".");
+        return _count[1][0] === "0"
+          ? _count[0] + "亿"
+          : _count[0] + "." + _count[1][0] + "亿";
+      } else {
+        let _count = (count / 10000).toString().split(".");
+        return _count[1][0] === "0"
+          ? _count[0] + "万"
+          : _count[0] + "." + _count[1][0] + "万";
+      }
     }
   },
   methods: {}

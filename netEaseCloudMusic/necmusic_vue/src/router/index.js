@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 const Home = ()=>import(/*webpackChunkName:'home'*/'../views/home/Home.vue')
-const SongList = ()=>import(/*webpackChunkName:'songList'*/'../views/songList/SongList.vue')
-
+const SongList = ()=>import(/*webpackChunkName:'songList'*/'../views/songList/SongList.vue');
+const PlayPage = ()=>import(/*webpackChunkName:'playPage'*/'../views/playPage/PlayPage.vue');
 Vue.use(VueRouter)
 
 const routes = [
@@ -21,6 +21,12 @@ const routes = [
     name: 'SongList',
     component: SongList,
     meta:{index:1}
+  },
+  {
+    path: '/playPage',
+    name: 'PlayPage',
+    component: PlayPage,
+    meta:{index:2}
   },
 ]
 

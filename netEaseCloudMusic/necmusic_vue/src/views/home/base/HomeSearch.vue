@@ -29,7 +29,7 @@
 				</div>
 			</div>
 			<div v-show='songList'>
-				<music-list v-for='song in songList' :key='song.id' :songInfo='song'></music-list>
+				<music-list v-for='song in songList' :key='song.id' :songInfo='song' @click.native='goPlayer(song.id)'></music-list>
 			</div>
 		</div>
 	</div>
@@ -106,7 +106,13 @@
 					}
 				})
 				this.songList = Object.freeze(showSongList)
-			}
+            },
+            goPlayer(id){
+                this.$router.push({
+                    path:'/playPage',
+                    query:{songId:id}
+                })
+            }
 		},
 	}
 </script>

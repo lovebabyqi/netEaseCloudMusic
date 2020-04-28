@@ -7,7 +7,7 @@
       <div class="right-top">
         <div class="user">
           <div class="name">{{comment.userName}}</div>
-          <div class="time">14:40</div>
+          <div class="time">{{comment.time|stringTime}}</div>
         </div>
         <span class="count"><span>{{comment.count}}</span>   <span class='count-icon'></span></span>
       </div>
@@ -30,6 +30,12 @@ export default {
   props: ["comment"],
   data() {
     return {};
+  },
+  filters:{
+      stringTime(time){
+          let date = new Date(JSON.parse(time)).toLocaleDateString();
+          return date.replace('/','年').replace('/','月')+'日';
+      }
   },
   methods: {}
 };

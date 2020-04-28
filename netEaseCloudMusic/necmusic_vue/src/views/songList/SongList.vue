@@ -1,5 +1,6 @@
 <template>
   <div class="song-list" v-if="Object.keys(playListInfo).length!==0">
+      <top-nav></top-nav>
     <!-- header start -->
     <song-list-header :play-list-info="playListInfo"></song-list-header>
     <!-- header end -->
@@ -22,6 +23,7 @@
     <div class="comment-list">
       <h3 class="list-title">精彩评论</h3>
       <comment-item v-for='comment in CommentList' :key='comment.CommentId' :comment='comment'></comment-item>
+      <div class="load-more" @click='loadMore'>加载更多评论...</div>
     </div>
     <!-- 精彩评论end -->
   </div>
@@ -30,6 +32,7 @@
 <script>
 import {getMusicUrl} from '../../api/music'
 import { reqGetSongList, reqGetSongListComments } from "../../api/songList";
+import TopNav from '../../components/top-nav/TopNav'
 import MusicList from "../../components/music-list/MusicList";
 import SongListHeader from "./base/SongListHeader";
 import SongListTags from "./base/SongListTags";
@@ -40,14 +43,16 @@ export default {
     MusicList,
     SongListTags,
     SongListHeader,
-    CommentItem
+    CommentItem,
+    TopNav
   },
   data() {
     return {
       listId: "",
       playListInfo: Object,
       showSongList: Array,
-      CommentList:Array,
+      CommentList:[],
+      page:1,//记录评论页数
     };
   },
   mounted() {
@@ -74,9 +79,9 @@ export default {
     },
     async getSongComments() {
       //获取歌单评论
-      const result = await reqGetSongListComments({ id: this.listId });
+      const result = await reqGetSongListComments({ id: this.listId ,offset:this.page*20});
       console.log(result);
-      let commentList = result.hotComments.map(item=>{
+      let commentList = result.comments.map(item=>{
           return {
               userName:item.user.nickname,//用户名
               userId:item.user.userId,
@@ -91,11 +96,17 @@ export default {
               beReplied:item.beReplied||''//回复评论,是回复加个@beReplied[0].user.nickname
           }
       })
-      this.CommentList = Object.freeze(commentList);
+      this.CommentList.push(...Object.freeze(commentList));
+    },
+    loadMore(){
+        this.page ++;
+        this.getSongComments()
     },
     async goPlayer(id){
-        const result = await getMusicUrl({id:id});
-        console.log(result)
+        this.$router.push({
+            path:'/playPage',
+            query:{songId:id}
+        })
     }
   }
 };
@@ -103,6 +114,7 @@ export default {
 
 <style scoped lang='less'>
 .song-list {
+    padding-top:40px;
   /*歌曲列表*/
   .play_list {
     width: 100vw;
@@ -125,6 +137,11 @@ export default {
       font-size: 12px;
       background: #eeeff0;
       color: #666666;
+    }
+    .load-more{
+        height: 55px;
+        line-height: 55px;
+        text-align: center;
     }
   }
 }

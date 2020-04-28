@@ -4,12 +4,22 @@
       <span>推荐歌单</span>
     </div>
     <div class="push-list">
-      <home-push-item v-for="item in pushList" :key="item.id" :info="item" @click.native='goPlayList(item.id)'></home-push-item>
+      <home-push-item
+        v-for="item in pushList"
+        :key="item.id"
+        :info="item"
+        @click.native="goPlayList(item.id)"
+      ></home-push-item>
     </div>
     <div class="home-title">
       <span>最新音乐</span>
     </div>
-    <music-list v-for="song in newSongList" :key="song.id" :songInfo="song" @click.native="goPlayer(song.id)"></music-list>
+    <music-list
+      v-for="song in newSongList"
+      :key="song.id"
+      :songInfo="song"
+      @click.native="goPlayer(song.id)"
+    ></music-list>
     <home-footer></home-footer>
   </div>
 </template>
@@ -46,17 +56,22 @@ export default {
       });
       this.newSongList = Object.freeze(showNewSongList); //不需要响应式
     },
-    goPlayer(id){//播放单曲
-        console.log(id)
+    goPlayer(id) {
+      //播放单曲
+      this.$router.push({
+        path: "/playPage",
+        query: { songId: id }
+      });
     },
-    goPlayList(listId){//打开歌单
-        this.$router.push({
-            path:'/songList',
-            query:{listId:listId},
-            params:{
-                listId
-            }
-        })
+    goPlayList(listId) {
+      //打开歌单
+      this.$router.push({
+        path: "/songList",
+        query: { listId: listId },
+        params: {
+          listId
+        }
+      });
     }
   },
   components: {

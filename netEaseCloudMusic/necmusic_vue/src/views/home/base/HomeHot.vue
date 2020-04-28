@@ -4,7 +4,7 @@
 			<div class="logo-icon"></div>
 			<div class="update-time"><span>更新日期：04月23日</span></div>
 		</div>
-		<music-list v-for='(song,index) in showSongList' :key='song.id' :song-info='song' :index='index+1'></music-list>
+		<music-list v-for='(song,index) in showSongList' :key='song.id' :song-info='song' :index='index+1' @click.native='goPlayer(song.id)'></music-list>
 		<div class='load-more' @click='loadMore'>
 			<span v-if='showLoadMore'>加载更多...</span>
 			<span v-else>热歌榜200首,暂无更多</span>
@@ -55,7 +55,13 @@ export default {
 			if(this.page===10){
 				this.showLoadMore = false;
 			}
-		}
+        },
+        goPlayer(id){
+            this.$router.push({
+                path:'/playPage',
+                query:{songId:id}
+            })
+        }
     },
 	components:{
 		MusicList
