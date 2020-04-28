@@ -54,7 +54,6 @@ export default {
       span {
 		padding:0 5px;
         border-bottom: 2px solid transparent;
-        box-sizing: border-box;
         display: inline-block;
         height: 40px;
       }

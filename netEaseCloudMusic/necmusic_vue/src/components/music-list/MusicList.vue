@@ -42,7 +42,7 @@
 <style scoped lang='less'>
 	.music-list {
 		display: flex;
-		height: 43px;
+		height: 60px;
 		overflow: hidden;
 		padding: 6px 0px 6px 9px;
 		
@@ -63,7 +63,6 @@
 			border-bottom:1px solid rgba(0,0,0,.1);
 			.left {
 				.music-name {
-                    box-sizing:border-box;
 					width:350px;
 					padding-right:65px;
 					height: 25px;
@@ -101,7 +100,7 @@
 			
 			.right {
 				position: absolute;
-				right: 0;
+				right: 13px;
 				top:-9px;
 				width: 24px;
 				height:24px;

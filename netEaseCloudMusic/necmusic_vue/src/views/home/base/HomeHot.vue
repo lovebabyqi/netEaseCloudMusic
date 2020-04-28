@@ -74,7 +74,6 @@ export default {
 	.home-hot{
 		width: 100vw;
 		.hot-logo{
-			box-sizing: border-box;
 			padding-left:20px;
 			padding-top:20px;
 			width: 100vw;

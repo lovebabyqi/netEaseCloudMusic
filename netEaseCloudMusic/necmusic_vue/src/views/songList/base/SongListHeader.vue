@@ -48,7 +48,6 @@ export default {
 
 <style scoped lang='less'>
 .list-header {
-  box-sizing: border-box;
   height: 186px;
   width: 100vw;
   padding: 30px 10px 30px 15px;
@@ -68,7 +67,6 @@ export default {
     transform: scale(1.5);
   }
   .img_box {
-    box-sizing: border-box;
     position: absolute;
     width: 126px;
     height: 126px;

@@ -44,7 +44,6 @@ export default {
 <style scoped lang='less'>
 .comment-item {
   position: relative;
-  box-sizing: border-box;
   width: 100vw;
   padding: 10px;
   overflow: hidden;

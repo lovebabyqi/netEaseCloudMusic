@@ -121,7 +121,6 @@ export default {
     overflow: hidden;
     .list-title {
       line-height: 23px;
-      box-sizing: border-box;
       padding: 0 10px;
       font-size: 12px;
       background: #eeeff0;
@@ -132,7 +131,6 @@ export default {
   .comment-list {
     .list-title {
       line-height: 23px;
-      box-sizing: border-box;
       padding: 0 10px;
       font-size: 12px;
       background: #eeeff0;

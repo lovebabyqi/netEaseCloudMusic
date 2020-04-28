@@ -40,7 +40,6 @@ export default {
 
 <style scoped lang='less'>
     .top-nav{
-        box-sizing:border-box;
         position:fixed;
         top:0;
         background-color: #fff;
@@ -50,7 +49,6 @@ export default {
         overflow: hidden;
         border-bottom:1px solid #eee;
         .btn{
-            box-sizing: border-box;
             padding:10px 10px;
             width: 40px;
             height: 40px;

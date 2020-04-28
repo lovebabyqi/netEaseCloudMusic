@@ -122,7 +122,6 @@
 		.search-table {
 			.search-input {
 				position: relative;
-				box-sizing: border-box;
 				padding: 15px 10px;
 				width: 100vw;
 				height: 60px;
@@ -158,7 +157,6 @@
 				.input {
 					display: block;
 					flex: 1;
-					box-sizing: border-box;
 					height: 30px;
 					background-color: #ebecec;
 					outline: none;
@@ -186,7 +184,6 @@
 					margin: 10px 0 7px;
 
 					.word {
-						box-sizing: border-box;
 						display: inline-block;
 						height: 32px;
 						margin-right: 8px;

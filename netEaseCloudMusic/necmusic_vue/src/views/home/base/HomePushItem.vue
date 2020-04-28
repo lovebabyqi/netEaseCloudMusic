@@ -37,7 +37,6 @@ export default {
 <style scoped lang='less'>
 .push-item {
   margin: 5px 0;
-  box-sizing: border-box;
   width: 122px;
   .imgBox {
     position: relative;

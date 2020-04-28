@@ -95,7 +95,6 @@ export default {
 .push-list {
   width: 100vw;
   overflow: hidden;
-  box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
