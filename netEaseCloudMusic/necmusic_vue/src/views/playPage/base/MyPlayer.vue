@@ -19,28 +19,28 @@
                 <span class="singer">{{songInfo.singer}}</span>
             </h2>
             <div class="lyric-item">
-<!--                <p-->
-<!--                        class="lyric"-->
-<!--                        v-for="(lyric,index) in lyricList"-->
-<!--                        :key="index"-->
-<!--                        :class="{active:lyric.time+'9'>currentTime&&lyric.time<currentTime}"-->
-<!--                        >-->
-<!--                    {{lyric.content}}-->
-<!--                </p>-->
-<!--                <p class="lyric">{{lyric[0].content}}</p>-->
-<!--                <p class="lyric active">{{lyric[1].content}}</p>-->
-<!--                <p class="lyric">{{lyric[2].content}}</p>-->
+                <div class="item" :style="{transform:`translateY(${-lyricIndex*22+'px'})`}">
+                    <p
+
+                            class="lyric"
+                            v-for="(lyric,index) in lyricList"
+                            :key="index"
+                            :data-index="mathIndex(lyric,index)"
+                            :class="{active:index===lyricIndex}"
+                    >
+                        {{lyric.content}}
+                    </p>
+                </div>
             </div>
         </div>
         <!-- 歌词end -->
         <!-- 进度条start -->
         <div class="progress-box">
             <progress :max="timeLong" :value="currentTime" class="my-progress"></progress>
-            <div class="boll" :style="{left:mathLeft}"></div>
+            <div class="boll" :style="{transform:mathLeft}"></div>
             <span class="now-time time">{{currentTime}}</span>
             <span class="time-long time">{{timeLong}}</span>
         </div>
-
         <!-- 进度条end -->
     </div>
 </template>
@@ -58,12 +58,8 @@
                 currentTime: '', //进度时间00:00字符串
                 timeLong: 0, //歌曲总时长
                 interval: null, //存定时器
-                mathLeft:'',
-                lyric:{
-                    first:'',
-                    second:'',
-                    third:'',
-                }
+                mathLeft: '',
+                lyricIndex:0,//正在显示的index.根据index控制歌词
             };
         },
         mounted() {
@@ -72,16 +68,28 @@
         beforeDestroy() {
             clearInterval(this.interval);
         },
-        watch:{
-          currentTime:function(newTime,oldTime){
-              this.lyric = this.lyricList.filter(item=>{
-                  return item.time===newTime
-              })
+        computed: {
+            mathIndex() {//计算属性,抛出一个函数,传递参数
+                return  (lyric,index)=> {
+                    if(lyric.time===this.currentTime){//每次进度时间到达歌词时间,lyricIndex+1
+                        this.lyricIndex = index;//保存index,根据index控制歌词滚动
+                        return true
+                    }
+                }
+            }
+        }
+        ,
+        watch: {
+            currentTime: function (newTime, oldTime) {
+                this.lyric = this.lyricList.filter(item => {
+                    return item.time === newTime
+                })
 
-          }
-        },
+            }
+        }
+        ,
         methods: {
-            togglePlay() {
+            togglePlay() {  //控制播放状态
                 this.$nextTick(() => {
                     let audio = document.getElementById("my-audio");
                     if (this.playing) {
@@ -94,40 +102,45 @@
                         clearInterval(this.interval);//先清除上次的定时器
                         this.interval = setInterval(() => {
                             this.getCurrentTime();
-                        },500);
+                        }, 500);
 
                     }
                 });
-            },
-            async getMusicLyric() {
+            }
+            ,
+            async getMusicLyric() {//处理歌词,网易云歌词是一整串字符串,将时间和歌词条目提取出来
                 const result = await reqGetLyric({id: this.songInfo.songId});
-                console.log(result.lrc.lyric)
-                let _lyricList = result.lrc.lyric.split('\n').map(item=>{
-                    let cItem = item.split(']')||'';//网易云歌词最后一行是空
-                    return{
-                        time:cItem[0].slice(1,6),
-                        content:cItem[1]||''
+                let _lyricList = result.lrc.lyric.split('\n').map(item => {
+                    let cItem = item.split(']') || '';//网易云歌词最后一行是空
+                    return {
+                        time: cItem[0].slice(1, 6),
+                        content: cItem[1] || '',//获取到的歌词有空白内容
                     }
-                })
-                console.log(_lyricList)
-                this.togglePlay();
-                this.lyricList = Object.freeze(_lyricList)
-            },
-            getCurrentTime() {
-                this.$nextTick(() => {
-                    const audio = document.getElementById('my-audio');
-                    // console.log(audio.currentTime)
-                    let _currentTime = +audio.currentTime.toString().split(".")[0]; //播放进度s为单位
-                    let _timeLong = Math.ceil(audio.duration); //总时长向上取整
-                    this.mathLeft = (_currentTime/_timeLong)* 260 + "px";
-                    this.currentTime = this.stringTime(_currentTime);
-                    this.timeLong = this.stringTime(_timeLong);
                 });
-            },
-            stringTime(time){   //格式时间1:1-->01:01
+                this.lyricList = Object.freeze(_lyricList)
+                this.togglePlay();//歌词整理好再开始播放
+            }
+            ,
+            getCurrentTime() {
+                // this.$nextTick(() => {
+                //     const audio = document.getElementById('my-audio');
+                //     let _currentTime = +audio.currentTime.toString().split(".")[0]; //播放进度s为单位
+                //     let _timeLong = Math.ceil(audio.duration); //总时长向上取整
+                //     this.mathLeft = `translateX(${(_currentTime / _timeLong) * 260 + "px"})`;//进度条小球位置
+                //     this.currentTime = this.stringTime(_currentTime);//进度时间
+                //     this.timeLong = this.stringTime(_timeLong);//总时长
+                // });
+                const audio = document.getElementById('my-audio');
+                let _currentTime = +audio.currentTime.toString().split(".")[0]; //播放进度s为单位
+                let _timeLong = Math.ceil(audio.duration); //总时长向上取整
+                this.mathLeft = `translateX(${(_currentTime / _timeLong) * 260 + "px"})`;//进度条小球位置
+                this.currentTime = this.stringTime(_currentTime);//进度时间
+                this.timeLong = this.stringTime(_timeLong);//总时长
+            }
+            ,
+            stringTime(time) {   //格式时间1:1-->01:01
                 const m = Math.floor((time % 3600) / 60);
                 const s = Math.floor(time % 60);
-
                 function toTwo(num) {
                     //这个方法用来格式时间1-->01
                     return num < 10 ? "0" + num : num + "";
@@ -135,7 +148,8 @@
                 return toTwo(m) + ':' + toTwo(s)
             }
         }
-    };
+    }
+    ;
 </script>
 
 <style scoped lang='less'>
@@ -264,18 +278,35 @@
 
 
             .lyric-item {
+                position: absolute;
+                top:45px;
+                height:168px;
+                left:0;
+                right:0;
+                margin:auto;
                 color: #666666;
+                overflow: hidden;
                 font-size: 14px;
-                .lyric{
-                    line-height:1.2em;
-                    transition:all .5s ease;
-                    transform: translateY(0) scale(1);
-                }
-                .lyric.active {
-                    transform:translateY(-14px) scale(1.1);
-                    color: red;
-                }
+                .item{
+                    position:absolute;
+                    top:40px;
+                    left:0;
+                    right:0;
+                    margin:auto;
+                    transform: translateY(0);
+                    transition: all .5s ease;
+                    .lyric {
+                        text-align:center;
+                        width:100%;
+                        line-height: 22px;
+                        transition: all .5s ease;
+                    }
 
+                    .lyric.active {
+                        color: #fff;
+                        font-size:16px;
+                    }
+                }
             }
         }
 
@@ -311,7 +342,8 @@
             .boll {
                 position: absolute;
                 transition: transform 0.5s ease;
-                left: 0;
+                left: -6px;
+                transform:translateX(0);
                 top: 50%;
                 width: 12px;
                 height: 12px;

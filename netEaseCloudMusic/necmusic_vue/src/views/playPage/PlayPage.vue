@@ -17,21 +17,14 @@ export default {
     },
     data(){
         return {
-            // songId:'',
-            // songUrl:'',
             songInfo:{}
         }
     },
     mounted(){
         this.songId = this.$route.query.songId;
-        // this.getMusicUrl();
         this.getMusicDetail()
     },
     methods:{
-        // async getMusicUrl(){
-        //
-        // },
-
         async getMusicDetail(){
             const result = await reqSongDetail({ids:this.songId});
             const result2 = await reqGetMusicUrl({id:this.songId});
