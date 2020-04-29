@@ -1,6 +1,6 @@
 <template>
     <div class='play-page'>
-        <!-- <top-nav :show-top='false'></top-nav> -->
+         <top-nav :show-top='false'></top-nav>
         <my-player v-if="Object.keys(songInfo).length!==0" :song-info='songInfo'></my-player>
     </div>
 </template>
@@ -21,19 +21,19 @@ export default {
         }
     },
     mounted(){
-        this.songId = this.$route.query.songId;
-        this.getMusicDetail()
+        const songId = this.$route.query.songId;
+        this.getMusicDetail(songId)
     },
     methods:{
-        async getMusicDetail(){
-            const result = await reqSongDetail({ids:this.songId});
-            const result2 = await reqGetMusicUrl({id:this.songId});
+        async getMusicDetail(songId){
+            const result = await reqSongDetail({ids:songId});
+            const result2 = await reqGetMusicUrl({id:songId});
             let songUrl = result2.data[0].url;
             let songInfo = {
                 name:result.songs[0].al.name,//歌名
                 singer:result.songs[0].ar.reduce((pre,next)=>{return pre  + next.name},''),//歌手名
                 picUrl:result.songs[0].al.picUrl,//歌曲图片
-                songId:this.songId,
+                songId:songId,
                 songUrl:songUrl
             }
             this.songInfo = Object.freeze(songInfo);

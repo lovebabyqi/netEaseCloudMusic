@@ -11,7 +11,7 @@
                 </div>
             </div>
         </div>
-        <audio :src="songInfo.songUrl" :loop=true id="my-audio"></audio>
+        <audio :src="songInfo.songUrl" muted :loop=true ref="myAudio"></audio>
         <!-- 歌词start -->
         <div class="lyric-box">
             <h2 class="lyric-title">
@@ -57,8 +57,8 @@
                 lyricList: [],
                 currentTime: '', //进度时间00:00字符串
                 timeLong: 0, //歌曲总时长
+                mathLeft:'',//记录小球left
                 interval: null, //存定时器
-                mathLeft: '',
                 lyricIndex:0,//正在显示的index.根据index控制歌词
             };
         },
@@ -90,22 +90,18 @@
         ,
         methods: {
             togglePlay() {  //控制播放状态
-                this.$nextTick(() => {
-                    let audio = document.getElementById("my-audio");
-                    if (this.playing) {
-                        clearInterval(this.interval);
-                        this.playing = false;
-                        audio.pause(); //暂停,停止获取播放进度
-                    } else {
-                        this.playing = true;
-                        audio.play(); //播放,开启定时器获取播放进度
-                        clearInterval(this.interval);//先清除上次的定时器
-                        this.interval = setInterval(() => {
-                            this.getCurrentTime();
-                        }, 500);
-
-                    }
-                });
+                if (this.playing) {
+                    clearInterval(this.interval);
+                    this.playing = false;
+                    this.$refs.myAudio.pause(); //暂停,停止获取播放进度
+                } else {
+                    this.playing = true;
+                    this.$refs.myAudio.play(); //播放,开启定时器获取播放进度
+                    clearInterval(this.interval);//先清除上次的定时器
+                    this.interval = setInterval(() => {
+                        this.getCurrentTime();
+                    }, 1000);
+                }
             }
             ,
             async getMusicLyric() {//处理歌词,网易云歌词是一整串字符串,将时间和歌词条目提取出来
@@ -118,21 +114,13 @@
                     }
                 });
                 this.lyricList = Object.freeze(_lyricList)
-                this.togglePlay();//歌词整理好再开始播放
+                this.togglePlay();//浏览器是不希望我们自动播放的,手动来一下
+                // 但是播放仍然会有警告,解决方案,给audio加上muted属性,muted属性设置返回音频是否应该被静音(关闭声音)
             }
             ,
             getCurrentTime() {
-                // this.$nextTick(() => {
-                //     const audio = document.getElementById('my-audio');
-                //     let _currentTime = +audio.currentTime.toString().split(".")[0]; //播放进度s为单位
-                //     let _timeLong = Math.ceil(audio.duration); //总时长向上取整
-                //     this.mathLeft = `translateX(${(_currentTime / _timeLong) * 260 + "px"})`;//进度条小球位置
-                //     this.currentTime = this.stringTime(_currentTime);//进度时间
-                //     this.timeLong = this.stringTime(_timeLong);//总时长
-                // });
-                const audio = document.getElementById('my-audio');
-                let _currentTime = +audio.currentTime.toString().split(".")[0]; //播放进度s为单位
-                let _timeLong = Math.ceil(audio.duration); //总时长向上取整
+                let _currentTime = + this.$refs.myAudio.currentTime.toString().split(".")[0]; //播放进度s为单位
+                let _timeLong = Math.ceil(this.$refs.myAudio.duration); //总时长向上取整
                 this.mathLeft = `translateX(${(_currentTime / _timeLong) * 260 + "px"})`;//进度条小球位置
                 this.currentTime = this.stringTime(_currentTime);//进度时间
                 this.timeLong = this.stringTime(_timeLong);//总时长
@@ -284,7 +272,7 @@
                 left:0;
                 right:0;
                 margin:auto;
-                color: #666666;
+                color: #999;
                 overflow: hidden;
                 font-size: 14px;
                 .item{
@@ -328,11 +316,11 @@
             }
 
             .now-time {
-                left: -33px;
+                left: -40px;
             }
 
             .time-long {
-                right: -33px;
+                right: -40px;
             }
 
             .my-progress:focus {
@@ -364,7 +352,7 @@
             /* 表示总长度背景色 */
 
             .my-progress::-webkit-progress-bar {
-                background-color: #666666;
+                background-color: #999;
                 border-radius: 0.2rem;
             }
 
