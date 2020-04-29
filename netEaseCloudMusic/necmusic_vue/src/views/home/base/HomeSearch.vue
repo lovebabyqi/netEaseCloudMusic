@@ -29,14 +29,14 @@
 				</div>
 			</div>
 			<div v-show='songList'>
-				<music-list v-for='song in songList' :key='song.id' :songInfo='song' @click.native='goPlayer(song.id)'></music-list>
+				<music-list-item v-for='song in songList' :key='song.id' :songInfo='song' @click.native='goPlayer(song.id)'></music-list-item>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-	import MusicList from '../../../components/music-list/MusicList.vue'
+	import MusicListItem from '../../../components/music-list-item/MusicListItem.vue'
 	import {
 		reqHotSearch,
 		reqSearchSuggest,
@@ -53,7 +53,7 @@
 			}
 		},
 		components: {
-			MusicList
+			MusicListItem
 		},
 		created() {
 			this.getHotSearchWords();

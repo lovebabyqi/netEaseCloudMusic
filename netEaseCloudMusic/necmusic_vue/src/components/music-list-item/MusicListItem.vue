@@ -24,7 +24,7 @@
 <!-- 不同接口拿到的歌单数据格式不统一,处理好数据在传递进来使用 -->
 <script>
 	export default {
-        name: "MusicList",
+        name: "MusicListItem",
         props:['songInfo','index'],
 		filters: {
 			stringIndex(index) {

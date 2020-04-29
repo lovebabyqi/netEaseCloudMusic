@@ -10,13 +10,13 @@
     <!-- 歌曲列表 start-->
     <div class="play_list">
       <h3 class="list-title">歌曲列表</h3>
-      <music-list
+      <music-list-item
         v-for="(song,index) in showSongList"
         :key="song.id"
         :index="index+1"
         :songInfo="song"
         @click.native="goPlayer(song.id)"
-      ></music-list>
+      ></music-list-item>
     </div>
     <!-- 歌曲列表 end -->
     <!-- 精彩评论start -->
@@ -32,15 +32,15 @@
 <script>
 import {getMusicUrl} from '../../api/music'
 import { reqGetSongList, reqGetSongListComments } from "../../api/songList";
-import TopNav from '../../components/top-nav/TopNav'
-import MusicList from "../../components/music-list/MusicList";
+import TopNav from '../../components/top-nav/TopNav';//头部导航
+import MusicListItem from "../../components/music-list-item/MusicListItem";//
 import SongListHeader from "./base/SongListHeader";
 import SongListTags from "./base/SongListTags";
 import CommentItem from '../../components/comment-item/CommentItem'
 export default {
   name: "SongList",
   components: {
-    MusicList,
+    MusicListItem,
     SongListTags,
     SongListHeader,
     CommentItem,

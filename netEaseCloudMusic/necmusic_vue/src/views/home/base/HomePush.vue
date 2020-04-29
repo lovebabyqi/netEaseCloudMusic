@@ -14,12 +14,12 @@
     <div class="home-title">
       <span>最新音乐</span>
     </div>
-    <music-list
+    <music-list-item
       v-for="song in newSongList"
       :key="song.id"
       :songInfo="song"
       @click.native="goPlayer(song.id)"
-    ></music-list>
+    ></music-list-item>
     <home-footer></home-footer>
   </div>
 </template>
@@ -27,7 +27,7 @@
 <script>
 import { reqHomePush, reqHomeNewSong } from "../../../api/home";
 import HomePushItem from "./HomePushItem";
-import MusicList from "../../../components/music-list/MusicList";
+import MusicListItem from "../../../components/music-list-item/MusicListItem";
 import HomeFooter from "./HomeFooter";
 export default {
   name: "HoemPush",
@@ -76,7 +76,7 @@ export default {
   },
   components: {
     HomePushItem,
-    MusicList,
+    MusicListItem,
     HomeFooter
   }
 };

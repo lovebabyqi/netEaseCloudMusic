@@ -4,7 +4,7 @@
 			<div class="logo-icon"></div>
 			<div class="update-time"><span>更新日期：04月23日</span></div>
 		</div>
-		<music-list v-for='(song,index) in showSongList' :key='song.id' :song-info='song' :index='index+1' @click.native='goPlayer(song.id)'></music-list>
+		<music-list-item v-for='(song,index) in showSongList' :key='song.id' :song-info='song' :index='index+1' @click.native='goPlayer(song.id)'></music-list-item>
 		<div class='load-more' @click='loadMore'>
 			<span v-if='showLoadMore'>加载更多...</span>
 			<span v-else>热歌榜200首,暂无更多</span>
@@ -14,7 +14,7 @@
 
 <script>
 
-import MusicList from '../../../components/music-list/MusicList.vue'
+import MusicListItem from '../../../components/music-list-item/MusicListItem.vue'
 import {reqHotSongList} from '../../../api/home.js'
 export default {
     name:'HomeHot',
@@ -64,7 +64,7 @@ export default {
         }
     },
 	components:{
-		MusicList
+		MusicListItem
 	}
 }
 

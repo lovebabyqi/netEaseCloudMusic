@@ -1,6 +1,5 @@
 <template>
     <div class="my-player">
-        <div class="bg" :style="{background:`url(${songInfo.picUrl})`}"></div>
         <div class="desc-needle" :class="{active:playing}"></div>
         <div class="player-box">
             <h2 class="title">网易云音乐</h2>
@@ -11,7 +10,12 @@
                 </div>
             </div>
         </div>
-        <audio :src="songInfo.songUrl" muted :loop=true ref="myAudio"></audio>
+        <audio
+                :src="songInfo.songUrl"
+                muted="true"
+                :loop=true
+                @timeupdate="getCurrentTime"
+                ref="myAudio"></audio>
         <!-- 歌词start -->
         <div class="lyric-box">
             <h2 class="lyric-title">
@@ -25,7 +29,6 @@
                             class="lyric"
                             v-for="(lyric,index) in lyricList"
                             :key="index"
-                            :data-index="mathIndex(lyric,index)"
                             :class="{active:index===lyricIndex}"
                     >
                         {{lyric.content}}
@@ -36,7 +39,7 @@
         <!-- 歌词end -->
         <!-- 进度条start -->
         <div class="progress-box">
-            <progress :max="timeLong" :value="currentTime" class="my-progress"></progress>
+            <progress :max="timeLongNumber" :value="currentTimeNumber" class="my-progress"></progress>
             <div class="boll" :style="{transform:mathLeft}"></div>
             <span class="now-time time">{{currentTime}}</span>
             <span class="time-long time">{{timeLong}}</span>
@@ -47,7 +50,6 @@
 
 <script>
     import {reqGetLyric} from "../../../api/music";
-
     export default {
         name: "MyPlayer",
         props: ["songInfo"],
@@ -56,76 +58,65 @@
                 playing: false, //记录是否正在播放
                 lyricList: [],
                 currentTime: '', //进度时间00:00字符串
-                timeLong: 0, //歌曲总时长
+                timeLong: '', //歌曲总时长00:00字符串
+                currentTimeNumber:0,//进度时间s
+                timeLongNumber:0,//总时长s
                 mathLeft:'',//记录小球left
-                interval: null, //存定时器
                 lyricIndex:0,//正在显示的index.根据index控制歌词
+                preTime:0,//时间戳节流preTime
             };
         },
         mounted() {
             this.getMusicLyric();
-        },
-        beforeDestroy() {
-            clearInterval(this.interval);
-        },
-        computed: {
-            mathIndex() {//计算属性,抛出一个函数,传递参数
-                return  (lyric,index)=> {
-                    if(lyric.time===this.currentTime){//每次进度时间到达歌词时间,lyricIndex+1
-                        this.lyricIndex = index;//保存index,根据index控制歌词滚动
-                        return true
-                    }
-                }
-            }
-        }
-        ,
-        watch: {
-            currentTime: function (newTime, oldTime) {
-                this.lyric = this.lyricList.filter(item => {
-                    return item.time === newTime
-                })
-
-            }
         }
         ,
         methods: {
             togglePlay() {  //控制播放状态
                 if (this.playing) {
-                    clearInterval(this.interval);
                     this.playing = false;
                     this.$refs.myAudio.pause(); //暂停,停止获取播放进度
                 } else {
                     this.playing = true;
                     this.$refs.myAudio.play(); //播放,开启定时器获取播放进度
-                    clearInterval(this.interval);//先清除上次的定时器
-                    this.interval = setInterval(() => {
-                        this.getCurrentTime();
-                    }, 1000);
+                    this.timeLongNumber = Math.ceil(this.$refs.myAudio.duration); //总时长向上取整s为单位
+                    this.timeLong = this.stringTime(this.timeLongNumber);//总时长'03:10'
                 }
             }
             ,
             async getMusicLyric() {//处理歌词,网易云歌词是一整串字符串,将时间和歌词条目提取出来
                 const result = await reqGetLyric({id: this.songInfo.songId});
                 let _lyricList = result.lrc.lyric.split('\n').map(item => {
-                    let cItem = item.split(']') || '';//网易云歌词最后一行是空
+                    let cItem = item.split(']') || '';//连续换行或最后一个换行分割后会出现空串,split出错
                     return {
                         time: cItem[0].slice(1, 6),
-                        content: cItem[1] || '',//获取到的歌词有空白内容
+                        content: cItem[1],
                     }
                 });
                 this.lyricList = Object.freeze(_lyricList)
-                this.togglePlay();//浏览器是不希望我们自动播放的,手动来一下
+                this.togglePlay();//play() first警告 浏览器是不希望我们自动播放的,手动来一下
                 // 但是播放仍然会有警告,解决方案,给audio加上muted属性,muted属性设置返回音频是否应该被静音(关闭声音)
             }
             ,
             getCurrentTime() {
-                let _currentTime = + this.$refs.myAudio.currentTime.toString().split(".")[0]; //播放进度s为单位
-                let _timeLong = Math.ceil(this.$refs.myAudio.duration); //总时长向上取整
-                this.mathLeft = `translateX(${(_currentTime / _timeLong) * 260 + "px"})`;//进度条小球位置
-                this.currentTime = this.stringTime(_currentTime);//进度时间
-                this.timeLong = this.stringTime(_timeLong);//总时长
+                let nowTime = Date.now();//获取当前时间戳
+                //歌词的时间节点是00:00以秒为单位的,节流不能大于1s,大于1s可能跳过了歌词条目
+                if(nowTime-this.preTime>500){   //节流每隔500ms执行一次
+                    this.findLyric();
+                    this.currentTimeNumber = + this.$refs.myAudio.currentTime.toString().split(".")[0]; //播放进度s为单位
+                    this.mathLeft = `translateX(${(this.currentTimeNumber / this.timeLongNumber) * 260 + "px"})`;//进度条小球位置
+                    this.currentTime = this.stringTime(this.currentTimeNumber);//进度时间
+                    this.preTime = nowTime;
+                }
             }
             ,
+            findLyric(){//查找歌词
+                let currentIndex = this.lyricList.findIndex((item)=>{
+                    return item.time === this.currentTime
+                });
+                if(currentIndex!==-1){//找到当前进度时间的 歌词条目
+                    this.lyricIndex = currentIndex
+                }
+            },
             stringTime(time) {   //格式时间1:1-->01:01
                 const m = Math.floor((time % 3600) / 60);
                 const s = Math.floor(time % 60);
@@ -142,17 +133,10 @@
 
 <style scoped lang='less'>
     .my-player {
+        position:relative;
         width: 100vw;
         min-height: 100vh;
         overflow: hidden;
-
-        .bg {
-            position: absolute;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.25);
-            filter: blur(15px);
-        }
 
         /*播放指针*/
 
@@ -189,13 +173,15 @@
                 color: #fff;
                 font-size: 14px;
                 display: inline-block;
+                width:100%;
+                text-align:right;
                 padding-left: 25px;
                 height: 20px;
                 line-height: 20px;
                 background: url("../../../assets/images/icon.png");
                 background-repeat: no-repeat;
                 background-size: contain;
-                background-position: 0 0;
+                background-position: 262px 0;
             }
 
             .song-desc.active {
@@ -305,7 +291,7 @@
             left: 50%;
             transform: translateX(-50%);
             bottom: 40px;
-            z-index: 15;
+            z-index: 20;
             // overflow: hidden;
             .time {
                 position: absolute;
@@ -345,8 +331,8 @@
                 outline: none;
                 width: 260px;
                 height: 3px;
-                color: #f00;
                 border-radius: 0.1rem;
+                background-color: #fff;
             }
 
             /* 表示总长度背景色 */
