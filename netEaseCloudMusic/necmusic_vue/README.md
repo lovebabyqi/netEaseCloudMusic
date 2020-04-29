@@ -24,7 +24,9 @@ yarn run build
 
 ### 2.写完播放器页,整理下思路
 
-<img src='https://github.com/lovebabyqi/netEaseCloudMusic/blob/master/netEaseCloudMusic/images/%E6%92%AD%E6%94%BE%E5%99%A8.png'>
+<img src='https://github.com/lovebabyqi/netEaseCloudMusic/blob/master/netEaseCloudMusic/images/player.png'>
+
+<img src='<https://github.com/lovebabyqi/netEaseCloudMusic/blob/master/netEaseCloudMusic/images/player.png> '>
 
 思路:请求到数据后,播放audio,获取audio的currentTime进度,(可以开循环定时器500ms获取一次,或者给audio绑定**@timeupdate**),
 
