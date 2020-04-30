@@ -21,7 +21,7 @@ export default {
   width: 100vw;
   height: 84px;
   background-color: #d43c33;
-  z-index:100;
+  z-index:20;
   .header-content {
     position: relative;
     box-sizing: border-box;

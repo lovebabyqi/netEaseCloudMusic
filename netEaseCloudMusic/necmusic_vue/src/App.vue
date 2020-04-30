@@ -1,14 +1,15 @@
 <template>
   <div id="app">
-      <keep-alive include="PlayPage">
-          <router-view class='content'></router-view>
-      </keep-alive>
+      <router-view class='content'/>
+      <play-page/>
+
   </div>
 </template>
 <script>
+    import PlayPage from "./views/playPage/PlayPage";
   export default {
     components:{
-      
+        PlayPage
     }
   }
 </script>

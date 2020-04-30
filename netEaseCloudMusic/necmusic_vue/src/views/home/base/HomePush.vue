@@ -9,7 +9,7 @@
         :key="item.id"
         :info="item"
         @click.native="goPlayList(item.id)"
-      ></home-push-item>
+      />
     </div>
     <div class="home-title">
       <span>最新音乐</span>
@@ -19,8 +19,8 @@
       :key="song.id"
       :songInfo="song"
       @click.native="goPlayer(song.id)"
-    ></music-list-item>
-    <home-footer></home-footer>
+    />
+    <home-footer/>
   </div>
 </template>
 
@@ -30,7 +30,7 @@ import HomePushItem from "./HomePushItem";
 import MusicListItem from "../../../components/music-list-item/MusicListItem";
 import HomeFooter from "./HomeFooter";
 export default {
-  name: "HoemPush",
+  name: "HomePush",
   data() {
     return {
       pushList: [],
@@ -45,6 +45,7 @@ export default {
       const result1 = await reqHomePush(); //获取首页推荐歌单
       this.pushList = Object.freeze(result1.result); //不需要响应式
       const result2 = await reqHomeNewSong(); //获取首页最新音乐
+      this.$store.commit('changeSong',result2.result[0].id)
       let showNewSongList = result2.result.map(item => {
         return {
           id: item.id, //歌曲id,后面需要根据id请求播放
@@ -58,10 +59,9 @@ export default {
     },
     goPlayer(id) {
       //播放单曲
-      this.$router.push({
-        path: "/playPage",
-        query: { songId: id }
-      });
+      this.$store.commit('changeStatus',{status:1})//暂停
+      this.$store.commit('changeSong',id);//切歌
+
     },
     goPlayList(listId) {
       //打开歌单

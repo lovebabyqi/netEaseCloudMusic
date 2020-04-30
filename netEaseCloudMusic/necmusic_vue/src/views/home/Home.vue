@@ -1,21 +1,21 @@
 <template>
     <div class="home">
         <!--头部logo start-->
-        <nec-header></nec-header>
+        <nec-header/>
         <!--头部logo end-->
         <!--tab选项卡 start-->
-        <home-tabs @tabClick="toggleTab" :current-index="currentIndex"></home-tabs>
+        <home-tabs @tabClick="toggleTab" :current-index="currentIndex"/>
         <!--tab选项卡 end-->
         <div class="container">
             <transition-group :name='activeClass'>
                 <!--推荐音乐start-->
-                <home-push v-show="currentIndex===0" class="fade" key='homeP'></home-push>
+                <home-push v-show="currentIndex===0" class="fade" key='homeP'/>
                 <!--推荐音乐end-->
                 <!--热歌榜start-->
-                <home-hot v-show="currentIndex===1" class="fade" key='homeH'></home-hot>
+                <home-hot v-show="currentIndex===1" class="fade" key='homeH'/>
                 <!--热歌榜end-->
                 <!--搜索start-->
-                <home-search v-show="currentIndex===2" class="fade" key='homeS'></home-search>
+                <home-search v-show="currentIndex===2" class="fade" key='homeS'/>
                 <!--搜索end-->
             </transition-group>
         </div>
@@ -66,10 +66,10 @@
         left: 0;
         right: 0;
         top: 124px;
-        bottom: 0;
+        bottom: 60px;
         overflow: hidden;
         overflow-y: scroll;
-
+        padding-bottom:60px;
         .fade {
             position: absolute;
             width: 100vw;

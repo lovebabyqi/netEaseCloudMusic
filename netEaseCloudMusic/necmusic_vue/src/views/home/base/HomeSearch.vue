@@ -5,7 +5,11 @@
 				<span class='search-icon input-block'></span>
 				<input type="text" v-model='searchWords' class='input' placeholder="搜索歌曲、歌手、专辑" @input='getSearchSuggest'
 				 @keyup.enter='searchSongs'>
-				<span class='search-right input-block' v-if='searchWords' @click='clearInput'></span>
+				<span
+						class='search-right input-block'
+						v-if='searchWords'
+						@click='clearInput'
+				></span>
 			</div>
 
 			<div class="hot-words" v-show='!searchWords&&songList.length===0'>
@@ -18,7 +22,11 @@
 				<div v-if='Object.keys(suggestList).length!==0'>
 					<h3 class='suggest-title'>搜索"{{this.searchWords}}"</h3>
 					<ul class='suggest-list'>
-						<li class='suggest-item' v-for='item in suggestList' :key='item.id' @click='searchWord(item.name)'>
+						<li class='suggest-item'
+							v-for='item in suggestList'
+							:key='item.id'
+							@click='searchWord(item.name)'
+						>
 							<span class='suggest-icon'></span>
 							<span class='name'>{{item.name}}</span>
 						</li>
@@ -29,7 +37,12 @@
 				</div>
 			</div>
 			<div v-show='songList'>
-				<music-list-item v-for='song in songList' :key='song.id' :songInfo='song' @click.native='goPlayer(song.id)'></music-list-item>
+				<music-list-item
+						v-for='song in songList'
+						:key='song.id'
+						:songInfo='song'
+						@click.native='goPlayer(song.id)'
+				/>
 			</div>
 		</div>
 	</div>
@@ -108,10 +121,7 @@
 				this.songList = Object.freeze(showSongList)
             },
             goPlayer(id){
-                this.$router.push({
-                    path:'/playPage',
-                    query:{songId:id}
-                })
+				this.$store.commit('changeSong',id);//切歌
             }
 		},
 	}

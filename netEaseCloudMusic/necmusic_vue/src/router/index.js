@@ -21,13 +21,7 @@ const routes = [
     name: 'SongList',
     component: SongList,
     meta:{index:1}
-  },
-  {
-    path: '/playPage',
-    name: 'PlayPage',
-    component: PlayPage,
-    meta:{index:2}
-  },
+  }
 ]
 
 const router = new VueRouter({
