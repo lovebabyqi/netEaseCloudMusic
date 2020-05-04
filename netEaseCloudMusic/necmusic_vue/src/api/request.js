@@ -1,4 +1,5 @@
 import axios from 'axios';
+axios.defaults.baseURL = 'http://nec.lovebabyqi.cn'
 //统一数据
 axios.interceptors.response.use(res=>res.data);
 

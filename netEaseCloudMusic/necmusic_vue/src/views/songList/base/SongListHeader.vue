@@ -9,14 +9,14 @@
         {{playListInfo.playCount|stringCount}}
       </span>
         </div>
-        <div class="header-right">
+        <!-- <div class="header-right">
             <h2 class="info-name">{{playListInfo.name}}</h2>
             <div class="info-user">
                 <img class="user-pic" :src="playListInfo.creator.avatarUrl" alt/>
                 <span class="user-icon"></span>
                 <div class="user-name">{{playListInfo.creator.nickname}}</div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -74,11 +74,11 @@
             height: 126px;
             top: 30px;
             left: 15px;
-            z-index: 10;
+            // z-index: 10;
 
             .icon {
                 position: absolute;
-                z-index: 3;
+                // z-index: 3;
                 top: 10px;
                 left: 0;
                 padding: 0 8px;
@@ -96,7 +96,7 @@
                 position: absolute;
                 right: 2px;
                 top: 0;
-                z-index: 3;
+                // z-index: 3;
                 padding-left: 15px;
                 color: #fff;
                 font-size: 12px;
@@ -125,7 +125,7 @@
             top: 30px;
             left: 141px;
             height: 126px;
-            z-index: 10;
+            // z-index: 10;
 
             .info-name {
                 padding-top: 1px;
@@ -160,7 +160,7 @@
                     width: 75px;
                     height: 30px;
                     background-position: -40px 18px;
-                    z-index: 12;
+                    // z-index: 12;
                 }
 
                 .user-name {

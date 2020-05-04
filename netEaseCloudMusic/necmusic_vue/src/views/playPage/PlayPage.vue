@@ -53,12 +53,15 @@ export default {
 
 <style scoped lang='less'>
     .play-page{
-        position:relative;
+        position: relative;
         width:100vw;
+        top:0;
+        bottom:0;
         /*min-height:500vh;*/
         overflow: hidden;
-        background-color: rgba(0, 0, 0, 0.5);
+        // background-color: rgba(0, 0, 0, 0.5);
         color: #fff;
+        z-index:100;
         .bg {
             position: absolute;
             top:0;

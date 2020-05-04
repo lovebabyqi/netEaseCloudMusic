@@ -79,7 +79,8 @@
         mounted() {
             this.getMusicLyric();
             this.$nextTick(()=>{
-                this.progressWidth = document.body.offsetWidth * 0.6;//计算progress宽度
+                console.log(document.body.offsetWidth)
+                this.progressWidth = document.body.offsetWidth *0.6;//计算progress宽度
             })
         },
         computed: mapState({
@@ -112,7 +113,7 @@
             }
             ,
             async getMusicLyric() {//处理歌词,网易云歌词是一整串字符串,将时间和歌词条目提取出来
-                const result = await reqGetLyric({id: this.songInfo.songId});
+                const result = await reqGetLyric({id: this.songId||this.songInfo.songId});
                 this.lyricList = result.lrc.lyric.split('\n').map(item => {
                     let cItem = item.split(']') || '';//连续换行或最后一个换行分割后会出现空串,split出错
                     return {
@@ -167,7 +168,7 @@
 
 <style scoped lang='less'>
     .my-player {
-        position: relative;
+        position: fixed;
         bottom: 0;
         width: 100vw;
         height: 100vh;

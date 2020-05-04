@@ -45,7 +45,7 @@ export default {
         background-color: #fff;
         width: 100vw;
         height:40px;
-        z-index:100;
+        z-index:10;
         overflow: hidden;
         border-bottom:1px solid #eee;
         .btn{
