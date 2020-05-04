@@ -78,9 +78,14 @@
         },
         mounted() {
             this.getMusicLyric();
+            
             this.$nextTick(()=>{
-                console.log(document.body.offsetWidth)
+                this.getProgressWidth()
                 this.progressWidth = document.body.offsetWidth *0.6;//计算progress宽度
+                window.onresize = ()=>{
+                    console.log('resize')
+                    this.getProgressWidth()
+                }
             })
         },
         computed: mapState({
@@ -98,6 +103,9 @@
             }
         },
         methods: {
+            getProgressWidth(){//屏幕尺寸变化，计算progress宽度，不然进度条小球会出问题
+                this.progressWidth = document.body.offsetWidth *0.6;//计算progress宽度
+            },
             togglePlay() {  //控制播放状态
                 if (!this.playing) {    //根据状态 判断播放暂停
                     console.log('暂停')

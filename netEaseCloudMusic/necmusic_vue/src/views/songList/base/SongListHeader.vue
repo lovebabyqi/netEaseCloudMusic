@@ -9,14 +9,14 @@
         {{playListInfo.playCount|stringCount}}
       </span>
         </div>
-        <!-- <div class="header-right">
+        <div class="header-right">
             <h2 class="info-name">{{playListInfo.name}}</h2>
             <div class="info-user">
                 <img class="user-pic" :src="playListInfo.creator.avatarUrl" alt/>
                 <span class="user-icon"></span>
                 <div class="user-name">{{playListInfo.creator.nickname}}</div>
             </div>
-        </div> -->
+        </div>
     </div>
 </template>
 

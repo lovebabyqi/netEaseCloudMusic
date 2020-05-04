@@ -121,7 +121,9 @@
 				this.songList = Object.freeze(showSongList)
             },
             goPlayer(id){
-				this.$store.commit('changeSong',id);//切歌
+                this.$store.commit('changeStatus',{status:1})//暂停
+                this.$store.commit('changeSong',id);//切歌
+                
             }
 		},
 	}

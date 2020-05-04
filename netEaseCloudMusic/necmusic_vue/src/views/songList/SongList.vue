@@ -112,7 +112,17 @@
                 this.getSongComments()
             },
             async goPlayer(id) {
-                this.$store.commit('changeSong', id);//切歌
+                this.$store.commit('changeStatus',{status:1})//暂停
+                this.$store.commit('changeSong',id);//切歌
+            }
+        },
+        watch:{
+            '$route.query.listId':{
+                handler(){
+                    this.listId = this.$route.query.listId;
+                    this.getSongList();
+                    this.getSongComments();
+                }
             }
         }
     };

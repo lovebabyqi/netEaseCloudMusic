@@ -1,7 +1,7 @@
 <template>
     <div class='top-nav'>
         <button @click='goBack' class='btn go-back'></button>
-        <button @click='backTop' class='btn back-top' v-show='showTop'></button>
+        <!-- <button @click='backTop' class='btn back-top' v-show='showTop'></button> -->
     </div>
 </template>
 
