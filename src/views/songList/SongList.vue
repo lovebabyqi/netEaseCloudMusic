@@ -131,6 +131,7 @@
 <style scoped lang='less'>
     .song-list {
         padding-top: 40px;
+        padding-bottom:60px;
         /*歌曲列表*/
 
         .play_list {
