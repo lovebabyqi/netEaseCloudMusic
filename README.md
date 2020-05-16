@@ -171,8 +171,8 @@ lyric: "[00:00.000] 作曲 : 李林↵[00:00.350] 作词 : 阮若珊↵[00:01.05
 字符串歌词，处理一下，分割转换为数组，时间以秒为基本单位。
 
 ```javascript
-let _lyricList = lyric.split('\n').map(item => {//用换行符 \n分割
-    let cItem = item.split(']') || '';//连续换行或最后一个换行分割后会出现空串,split出错
+let _lyricList = lyric.split('\n').slice(0,-1).map(item => {//用换行符 \n分割
+    let cItem = item.split(']');//最后一个换行分割后会出现空串,slice(0,-1)去除最后一项再遍历
     return {
         time: cItem[0].slice(1, 6),
         content: cItem[1]
