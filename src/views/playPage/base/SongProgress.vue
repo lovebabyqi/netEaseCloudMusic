@@ -1,6 +1,6 @@
 <template>
     <div class="progress-box">
-        <progress :max="timeLongNumber" :value="currentTimeNumber" class="my-progress"/>
+        <progress :max="timeLongNumber" :value="currentTimeNumber" class="my-progress" @click="toggleTime($event)"/>
         <div class="boll" :style="{transform:mathLeft}"></div>
         <span class="now-time time" v-show="currentTime">{{currentTime}}</span>
         <span class="time-long time" v-show="timeLong">{{timeLong}}</span>
@@ -10,7 +10,12 @@
 <script>
     export default {
         name: "SongProgress",
-        props: ['timeLongNumber', 'currentTimeNumber', 'mathLeft', 'timeLong', 'currentTime']
+        props: ['timeLongNumber', 'currentTimeNumber', 'mathLeft', 'timeLong', 'currentTime'],
+        methods:{
+            toggleTime(e){//点击进度条
+                this.$bus.$emit('changeCurrentTime',e.offsetX);
+            }
+        }
     }
 </script>
 
@@ -61,21 +66,18 @@
             width: 60vw;
             height: 3px;
             border-radius: 0.1rem;
-            /*background-color: #fff;*/
         }
 
         /* 表示总长度背景色 */
 
         .my-progress::-webkit-progress-bar {
             background-color: #999;
-            border-radius: 0.2rem;
         }
 
         /* 表示已完成进度背景色 */
 
         .my-progress::-webkit-progress-value {
             background-color: red;
-            border-radius: 0.2rem;
         }
     }
 </style>

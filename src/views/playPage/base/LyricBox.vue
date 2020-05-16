@@ -1,11 +1,11 @@
 <template>
     <div class="lyric-box" v-if="Object.keys(lyricList).length!==0">
         <h2 class="lyric-title">
-            <span class="name">{{songInfo.name}}-</span>
-            <span class="singer">{{songInfo.singer}}</span>
+            <span class="name">{{songInfo.name}}</span>
+            <span class="singer"> - {{songInfo.singer}}</span>
         </h2>
         <div class="lyric-item">
-            <div class="item" :style="{transform:`translateY(${-lyricIndex*22+'px'})`}">
+            <div class="item" :style="{transform:`translateY(${(-lyricIndex+2)*22+'px'})`}">
                 <p
 
                         class="lyric"
@@ -45,8 +45,8 @@
             }
 
             .singer {
-                color: #666666;
-                font-size: 16px;
+                color: #fff;
+                font-size: 14px;
             }
         }
 
@@ -59,12 +59,13 @@
             right: 0;
             margin: auto;
             color: #999;
+            /*transform: translateY(20px);*/
             overflow: hidden;
             font-size: 14px;
 
             .item {
                 position: absolute;
-                top: 40px;
+                top: 10%;
                 left: 0;
                 right: 0;
                 margin: auto;

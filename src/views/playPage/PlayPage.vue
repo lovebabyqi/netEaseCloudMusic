@@ -2,9 +2,8 @@
     <div class='play-page'>
         <audio
                 :src="songInfo.songUrl"
-
-                :loop=true
                 autoplay
+                :loop=true
                 @timeupdate="getCurrentTime"
                 ref="myAudio"/>
         <div class="my-player" v-show="!showMini">
@@ -66,7 +65,6 @@ export default {
     },
     data(){
         return {
-            // songId:'',
             songInfo:{},
             lyricList: [],
             currentTime: '', //进度时间00:00字符串
@@ -85,13 +83,16 @@ export default {
         songId: state => state.playingSongId
     }),
     mounted(){
-        // this.getMusicLyric();
         this.$nextTick(()=>{
-            this.getProgressWidth()
+            this.getProgressWidth();
+            this.$refs.myAudio.volume = 0.6;//初始控制一次音量
             this.progressWidth = document.body.offsetWidth *0.6;//计算progress宽度
-            window.onresize = ()=>{
+            window.onresize = ()=>{//视口变化
                 this.getProgressWidth()
             }
+        })
+        this.$bus.$on('changeCurrentTime',(offsetX)=>{//用事件车监听进度条点击，控制播放进度
+            this.$refs.myAudio.currentTime = offsetX;
         })
     },
     watch:{
@@ -105,7 +106,6 @@ export default {
     },
     methods:{
         async getMusicDetail(){   //根据id获取音乐info
-            // const songId = this.songId;
             const result = await reqSongDetail({ids:this.songId});
             const result2 = await reqGetMusicUrl({id:this.songId});
             let songUrl = result2.data[0].url;
@@ -155,12 +155,12 @@ export default {
             //歌词的时间节点是00:00以秒为单位的,节流不能大于1s,大于1s可能跳过了歌词条目
             if (nowTime - this.preTime > 300) {   //节流每隔300ms执行一次
                 this.findLyric();
-                this.currentTimeNumber = +e.target.currentTime.toString().split(".")[0]; //播放进度s为单位
+                this.currentTimeNumber = parseInt(e.target.currentTime); //播放进度取整，s为单位
                 this.mathLeft = `translateX(${(this.currentTimeNumber / this.timeLongNumber) * (this.progressWidth) + "px"})`;
                 //进度条小球位置,250px不能写死,视口变化后会出问题,将progress宽度设置为60vw,挂载时计算一次60vw
                 this.currentTime = this.stringTime(this.currentTimeNumber);//进度时间
                 this.preTime = nowTime;
-                this.timeLongNumber = Math.ceil(e.target.duration); //总时长向上取整s为单位
+                this.timeLongNumber = parseInt(e.target.duration); //总时长向上取整s为单位
                 this.timeLong = this.stringTime(this.timeLongNumber);//总时长'03:10'
             }
         }
@@ -169,7 +169,7 @@ export default {
             let currentIndex = this.lyricList.findIndex((item) => {
                 return item.time === this.currentTime
             });
-            if (currentIndex !== -1) {//找到当前进度时间的 歌词条目
+            if (currentIndex !== -1) {//找到当前进度时间的歌词条目
                 this.lyricIndex = currentIndex
             }
         },
@@ -184,7 +184,7 @@ export default {
 
             return toTwo(m) + ':' + toTwo(s)
         },
-        togglePlayer() {
+        togglePlayer() {//切换miniPlayer
             this.$store.commit('changePlayer', {status: 1})
         }
     },
@@ -219,7 +219,6 @@ export default {
                 top: 0;
                 height: 100%;
                 overflow: hidden;
-                z-index: -1;
                 -webkit-transition: opacity .3s linear;
                 transition: opacity .3s linear;
                 z-index: 1;

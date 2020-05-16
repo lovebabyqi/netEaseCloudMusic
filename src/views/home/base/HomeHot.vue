@@ -2,7 +2,7 @@
     <div class='home-hot'>
         <div class="hot-logo">
 			<div class="logo-icon"></div>
-			<div class="update-time"><span>更新日期：04月23日</span></div>
+			<div class="update-time"><span>更新日期：{{date}}</span></div>
 		</div>
 		<music-list-item
 				v-for='(song,index) in showSongList'
@@ -29,13 +29,18 @@ export default {
             hotSongList:[],
 			showSongList:[],
 			page:1,//记录当前第几组数据,每组20条,初始(0,20)
-			showLoadMore:true,//控制加载更多...是否以至最底部
+            showLoadMore:true,//控制加载更多...是否以至最底部
+            date:''
         }
     },
 	created(){
 		this.getHotSongList()
 	},
     methods:{
+        setDate(){
+            let _date = new Date();
+            this.date =  _date.getMonth()+'月'+_date.getDay()+'日';
+        },
         async getHotSongList(){
 			const result = await reqHotSongList({idx:'1'})//拿到两百条热歌
 			this.hotSongList = Object.freeze(result.playlist.tracks);//不需要响应式
