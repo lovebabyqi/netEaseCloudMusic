@@ -67,9 +67,15 @@
             position: absolute;
             top: 5px;
             left: 50%;
+            width: 50vw;
             transform: translateX(-50%);
-            font-size: 15px;
+            font-size: 14px;
             color: #fff;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow:ellipsis;
+
+
         }
 
         .mini-progress {

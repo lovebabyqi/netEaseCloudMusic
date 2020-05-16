@@ -68,7 +68,6 @@
                 top: 10%;
                 left: 0;
                 right: 0;
-                margin: auto;
                 transform: translateY(0);
                 transition: all .5s ease;
 

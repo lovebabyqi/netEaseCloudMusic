@@ -116,15 +116,6 @@
                 this.$store.commit('changeSong',id);//切歌
             }
         },
-        watch:{
-            '$route.query.listId':{
-                handler(){
-                    this.listId = this.$route.query.listId;
-                    this.getSongList();
-                    this.getSongComments();
-                }
-            }
-        }
     };
 </script>
 

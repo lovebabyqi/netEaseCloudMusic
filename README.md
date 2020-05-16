@@ -24,7 +24,7 @@ yarn run build
 
 ### 2.写完播放器页,整理下思路
 
-<img src='https://github.com/lovebabyqi/netEaseCloudMusic/blob/master/necmusic_vue/public/images/player.png'>
+<img src='http://n.lovebabyqi.cn/images/player.png'>
 
 思路:请求到数据后,播放audio，获取audio的currentTime进度，(可以开循环定时器500ms获取一次，或者给audio绑定**@timeupdate**),
 
@@ -36,7 +36,7 @@ audio.duration 总时长
 
 #### 2.1 指针旋转，图片旋转，背景
 
-旋转只依赖一个数据 ：`playing`播放状态，正在播放`true`，暂停`false`
+指针和图片动画只依赖一个数据 ：`playing`播放状态，正在播放`true`，暂停`false`
 
 根据播放状态给指针和图片绑定动态class类名
 
@@ -217,6 +217,15 @@ findLyric() {//查找歌词
 #### 2.4 播放进度控制
 
 点击进度条可跳转进度播放
+
+```javascript
+<div class="progress-box">
+    <progress :max="timeLongNumber" :value="currentTimeNumber" class="my-progress"></progress>
+    <div class="boll" :style="{transform:mathLeft}"></div>
+    <span class="now-time time">{{currentTime}}</span>
+    <span class="time-long time">{{timeLong}}</span>
+</div>
+```
 
 我们给进度条盒子`progress-box`设置了定位，点击进度条拿到`e.offsetX`点击位置，设置`audio.currentTime`，就能实现跳转。
 

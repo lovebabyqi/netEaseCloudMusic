@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-      <keep-alive>
+      <keep-alive exclude="SongList">
            <router-view class='content'/>
       </keep-alive>
       <play-page/>

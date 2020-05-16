@@ -2,7 +2,7 @@
     <div class='play-page'>
         <audio
                 :src="songInfo.songUrl"
-                autoplay
+                :autoplay='autoplay'
                 :loop=true
                 @timeupdate="getCurrentTime"
                 ref="myAudio"/>
@@ -49,158 +49,164 @@
 </template>
 
 <script>
-import DescNeedle from "./base/DescNeedle";
-import LyricBox from "./base/LyricBox";
-import MiniPlayer from "./base/MiniPlayer";
-import SongProgress from "./base/SongProgress";
-import {reqGetMusicUrl,reqSongDetail,reqGetLyric} from '../../api/music';
-import {mapState} from "vuex";
-export default {
-    name:'PlayPage',
-    components:{
-        DescNeedle,
-        LyricBox,
-        MiniPlayer,
-        SongProgress
-    },
-    data(){
-        return {
-            songInfo:{},
-            lyricList: [],
-            currentTime: '', //进度时间00:00字符串
-            timeLong: '', //歌曲总时长00:00字符串
-            currentTimeNumber: 0,//进度时间s
-            timeLongNumber: 0,//总时长s
-            mathLeft: '',//记录小球left
-            lyricIndex: 0,//正在显示的index.根据index控制歌词
-            preTime: 0,//时间戳节流preTime
-            progressWidth:0,//组件挂载,窗口变化，计算一次进度条宽度,60vw
-        }
-    },
-    computed:mapState({
-        showMini: state => state.showMini,//控制mini播放器显示
-        playing: state => state.isPlaying,//记录是否正在播放
-        songId: state => state.playingSongId
-    }),
-    mounted(){
-        this.$nextTick(()=>{
-            this.getProgressWidth();
-            this.$refs.myAudio.volume = 0.6;//初始控制一次音量
-            this.progressWidth = document.body.offsetWidth *0.6;//计算progress宽度
-            window.onresize = ()=>{//视口变化
-                this.getProgressWidth()
-            }
-        })
-        this.$bus.$on('changeCurrentTime',(offsetX)=>{//用事件车监听进度条点击，控制播放进度
-            this.$refs.myAudio.currentTime = offsetX;
-        })
-    },
-    watch:{
-        songId:function(){
-            this.getMusicDetail();
-            this.getMusicLyric();
+    import DescNeedle from "./base/DescNeedle";
+    import LyricBox from "./base/LyricBox";
+    import MiniPlayer from "./base/MiniPlayer";
+    import SongProgress from "./base/SongProgress";
+    import {reqGetMusicUrl, reqSongDetail, reqGetLyric} from '../../api/music';
+    import {mapState} from "vuex";
+
+    export default {
+        name: 'PlayPage',
+        components: {
+            DescNeedle,
+            LyricBox,
+            MiniPlayer,
+            SongProgress
         },
-        playing: function () {  //监听状态,控制暂停,播放
-            this.togglePlay()
-        }
-    },
-    methods:{
-        async getMusicDetail(){   //根据id获取音乐info
-            const result = await reqSongDetail({ids:this.songId});
-            const result2 = await reqGetMusicUrl({id:this.songId});
-            let songUrl = result2.data[0].url;
-            this.songInfo = {
-                name:result.songs[0].name,//歌名
-                singer:result.songs[0].ar.reduce((pre,next)=>{return pre  + next.name},''),//歌手名
-                picUrl:result.songs[0].al.picUrl,//歌曲图片
-                songId:this.songId,
-                songUrl:songUrl
+        data() {
+            return {
+                autoplay: false,
+                songInfo: {},
+                lyricList: [],
+                currentTime: '', //进度时间00:00字符串
+                timeLong: '', //歌曲总时长00:00字符串
+                currentTimeNumber: 0,//进度时间s
+                timeLongNumber: 0,//总时长s
+                mathLeft: '',//记录小球left
+                lyricIndex: 0,//正在显示的index.根据index控制歌词
+                preTime: 0,//时间戳节流preTime
+                progressWidth: 0,//组件挂载,窗口变化，计算一次进度条宽度,60vw
             }
         },
-        getProgressWidth(){//屏幕尺寸变化，计算progress宽度，不然进度条小球会出问题
-            this.progressWidth = document.body.offsetWidth *0.6;//计算progress宽度
+        computed: mapState({
+            showMini: state => state.showMini,//控制mini播放器显示
+            playing: state => state.isPlaying,//记录是否正在播放
+            songId: state => state.playingSongId
+        }),
+        mounted() {
+            this.$nextTick(() => {
+                this.getProgressWidth();
+                this.$refs.myAudio.volume = 0.6;//初始控制一次音量
+                this.$refs.myAudio.pause();//设置了自动播放，初始暂停
+                this.progressWidth = document.body.offsetWidth * 0.6;//计算progress宽度
+                window.onresize = () => {//视口变化
+                    this.getProgressWidth()
+                }
+            })
+            this.$bus.$on('changeCurrentTime', (offsetX) => {//用事件车监听进度条点击，控制播放进度
+                this.$refs.myAudio.currentTime = offsetX;
+            })
         },
-        togglePlay() {  //控制播放状态
-            if (!this.playing) {    //根据状态 判断播放暂停
-                console.log('暂停')
-                this.$nextTick(() => {
+        watch: {
+            songId: function () {
+                this.getMusicDetail();
+                this.getMusicLyric();
+            },
+            playing: function () {  //监听状态,控制暂停,播放
+                this.togglePlay()
+            }
+        },
+        methods: {
+            async getMusicDetail() {   //根据id获取音乐info
+                const result = await reqSongDetail({ids: this.songId});
+                const result2 = await reqGetMusicUrl({id: this.songId});
+                let songUrl = result2.data[0].url;
+                this.songInfo = {
+                    name: result.songs[0].name,//歌名
+                    singer: result.songs[0].ar.reduce((pre, next) => {
+                        return pre + next.name
+                    }, ''),//歌手名
+                    picUrl: result.songs[0].al.picUrl,//歌曲图片
+                    songId: this.songId,
+                    songUrl: songUrl
+                }
+            },
+            getProgressWidth() {//屏幕尺寸变化，计算progress宽度，不然进度条小球会出问题
+                this.progressWidth = document.body.offsetWidth * 0.6;//计算progress宽度
+            },
+            togglePlay() {  //控制播放状态
+                if (!this.playing) {    //根据状态 判断播放暂停
+                    console.log('暂停');
                     this.$refs.myAudio.pause(); //暂停,停止获取播放进度
-                })
-            } else {
-                console.log('播放')
-                this.$nextTick(() => {
+                    this.$store.commit('changeStatus', {status: 0})
+                } else {
+                    console.log('播放')
+                    this.autoplay = true;
                     this.$refs.myAudio.play(); //播放,开启定时器获取播放进度
-                })
+                    this.$store.commit('changeStatus', {status: 1})
+                }
             }
-        }
-        ,
-        async getMusicLyric() {//处理歌词,网易云歌词是一整串字符串,将时间和歌词条目提取出来
-            const result = await reqGetLyric({id: this.songId});
-            if(result.nolyric){//无歌词，纯音乐
-                this.lyricList = [{time:'00:00',content:'纯音乐，暂无歌词'}]
-            }else{//有歌词
-                this.lyricList = result.lrc.lyric.split('\n').map(item => {
-                    let cItem = item.split(']') || '';//连续换行或最后一个换行分割后会出现空串,split出错
-                    return {
-                        time: cItem[0].slice(1, 6),
-                        content: cItem[1],
-                    }
+            ,
+            async getMusicLyric() {//处理歌词,网易云歌词是一整串字符串,将时间和歌词条目提取出来
+                const result = await reqGetLyric({id: this.songId});
+                if (result.nolyric) {//无歌词，纯音乐
+                    this.lyricList = [{time: '00:00', content: '纯音乐，暂无歌词'}]
+                } else {//有歌词
+                    this.lyricList = result.lrc.lyric.split('\n').slice(0, -1).map(item => {
+                        //最后一个换行分割后会出现空串,将最后一项切掉,split出错
+                        let cItem = item.split(']');
+                        return {
+                            time: cItem[0].slice(1, 6),
+                            content: cItem[1],
+                        }
+                    });
+                }
+                this.togglePlay();
+            }
+            ,
+            getCurrentTime(e) {  //绑定了audio.timeupdate事件,计算时间,小球位置,歌词位置
+                let nowTime = Date.now();//获取当前时间戳
+                //歌词的时间节点是00:00以秒为单位的,节流不能大于1s,大于1s可能跳过了歌词条目
+                if (nowTime - this.preTime > 300) {   //节流每隔300ms执行一次
+                    this.findLyric();
+                    this.currentTimeNumber = parseInt(e.target.currentTime); //播放进度取整，s为单位
+                    this.mathLeft = `translateX(${(this.currentTimeNumber / this.timeLongNumber) * (this.progressWidth) + "px"})`;
+                    //进度条小球位置,250px不能写死,视口变化后会出问题,将progress宽度设置为60vw,挂载时计算一次60vw
+                    this.currentTime = this.stringTime(this.currentTimeNumber);//进度时间
+                    this.preTime = nowTime;
+                    this.timeLongNumber = parseInt(e.target.duration); //总时长向上取整s为单位
+                    this.timeLong = this.stringTime(this.timeLongNumber);//总时长'03:10'
+                }
+            }
+            ,
+            findLyric() {//查找歌词
+                let currentIndex = this.lyricList.findIndex((item) => {
+                    return item.time === this.currentTime
                 });
-            }
-            this.togglePlay();
-        }
-        ,
-        getCurrentTime(e) {  //绑定了audio.timeupdate事件,计算时间,小球位置,歌词位置
-            let nowTime = Date.now();//获取当前时间戳
-            //歌词的时间节点是00:00以秒为单位的,节流不能大于1s,大于1s可能跳过了歌词条目
-            if (nowTime - this.preTime > 300) {   //节流每隔300ms执行一次
-                this.findLyric();
-                this.currentTimeNumber = parseInt(e.target.currentTime); //播放进度取整，s为单位
-                this.mathLeft = `translateX(${(this.currentTimeNumber / this.timeLongNumber) * (this.progressWidth) + "px"})`;
-                //进度条小球位置,250px不能写死,视口变化后会出问题,将progress宽度设置为60vw,挂载时计算一次60vw
-                this.currentTime = this.stringTime(this.currentTimeNumber);//进度时间
-                this.preTime = nowTime;
-                this.timeLongNumber = parseInt(e.target.duration); //总时长向上取整s为单位
-                this.timeLong = this.stringTime(this.timeLongNumber);//总时长'03:10'
-            }
-        }
-        ,
-        findLyric() {//查找歌词
-            let currentIndex = this.lyricList.findIndex((item) => {
-                return item.time === this.currentTime
-            });
-            if (currentIndex !== -1) {//找到当前进度时间的歌词条目
-                this.lyricIndex = currentIndex
+                if (currentIndex !== -1) {//找到当前进度时间的歌词条目
+                    this.lyricIndex = currentIndex
+                }
+            },
+            stringTime(time) {   //格式时间1:1-->01:01
+                const m = Math.floor((time % 3600) / 60);
+                const s = Math.floor(time % 60);
+
+                function toTwo(num) {
+                    //这个方法用来格式时间1-->01
+                    return num < 10 ? "0" + num : num + "";
+                }
+
+                return toTwo(m) + ':' + toTwo(s)
+            },
+            togglePlayer() {//切换miniPlayer
+                this.$store.commit('changePlayer', {status: 1})
             }
         },
-        stringTime(time) {   //格式时间1:1-->01:01
-            const m = Math.floor((time % 3600) / 60);
-            const s = Math.floor(time % 60);
-
-            function toTwo(num) {
-                //这个方法用来格式时间1-->01
-                return num < 10 ? "0" + num : num + "";
-            }
-
-            return toTwo(m) + ':' + toTwo(s)
-        },
-        togglePlayer() {//切换miniPlayer
-            this.$store.commit('changePlayer', {status: 1})
-        }
-    },
-}
+    }
 
 </script>
 
 <style scoped lang='less'>
-    .play-page{
-        .my-player{
+    .play-page {
+        .my-player {
             position: fixed;
             bottom: 0;
             width: 100vw;
             height: 100vh;
             overflow: hidden;
             z-index: 101;
+
             .bg {
                 filter: blur(15px);
                 background-color: #161824;
@@ -223,12 +229,14 @@ export default {
                 transition: opacity .3s linear;
                 z-index: 1;
             }
+
             .btn-back {
                 position: fixed;
                 left: 10px;
                 top: 10px;
                 z-index: 101;
             }
+
             .player-container {
                 background-color: #fff;
                 position: absolute;
