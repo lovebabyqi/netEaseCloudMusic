@@ -1,19 +1,22 @@
 <template>
     <div class='home-hot'>
-        <div class="hot-logo">
-			<div class="logo-icon"></div>
-			<div class="update-time"><span>更新日期：{{date}}</span></div>
-		</div>
-		<music-list-item
-				v-for='(song,index) in showSongList'
-				:key='song.id'
-				:song-info='song'
-				:index='index+1'
-				@click.native='goPlayer(song.id)'
-		/>
-		<div class='load-more' @click='loadMore'>
-			<span v-if='showLoadMore'>加载更多...</span>
-			<span v-else>热歌榜200首,暂无更多</span>
+		<loading v-show="isLoading"/>
+		<div v-show="!isLoading">
+			<div class="hot-logo">
+				<div class="logo-icon"></div>
+				<div class="update-time"><span>更新日期：{{date}}</span></div>
+			</div>
+			<music-list-item
+					v-for='(song,index) in showSongList'
+					:key='song.id'
+					:song-info='song'
+					:index='index+1'
+					@click.native='goPlayer(song.id)'
+			/>
+			<div class='load-more' @click='loadMore'>
+				<span v-if='showLoadMore'>加载更多...</span>
+				<span v-else>热歌榜200首,暂无更多</span>
+			</div>
 		</div>
     </div>
 </template>
@@ -21,6 +24,7 @@
 <script>
 
 import MusicListItem from '../../../components/music-list-item/MusicListItem.vue'
+import Loading from '../../../components/loding/Loading'
 import {reqHotSongList} from '../../../api/home.js'
 export default {
     name:'HomeHot',
@@ -30,7 +34,8 @@ export default {
 			showSongList:[],
 			page:1,//记录当前第几组数据,每组20条,初始(0,20)
             showLoadMore:true,//控制加载更多...是否以至最底部
-            date:''
+            date:'',
+			isLoading:true
         }
     },
 	created(){
@@ -57,6 +62,7 @@ export default {
 				}
 			})
 			this.showSongList = Object.freeze(showNewSongList);//先拿20条,如果之后要上拉再获取
+			this.isLoading = false;
 		},
 		loadMore(){
 			if(this.page<10){
@@ -74,7 +80,8 @@ export default {
         }
     },
 	components:{
-		MusicListItem
+		MusicListItem,
+		Loading
 	}
 }
 

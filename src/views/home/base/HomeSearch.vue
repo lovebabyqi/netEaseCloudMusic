@@ -1,15 +1,16 @@
 <template>
 	<div class='home-search'>
-		<div class="search-table">
+		<loading v-show="isLoading"/>
+		<div class="search-table" v-show="!isLoading">
 			<div class="search-input">
-				<span class='search-icon input-block'></span>
+				<span class='search-icon input-block'/>
 				<input type="text" v-model='searchWords' class='input' placeholder="搜索歌曲、歌手、专辑" @input='getSearchSuggest'
-				 @keyup.enter='searchSongs'>
+				 @keyup.enter='searchSongs' >
 				<span
 						class='search-right input-block'
 						v-if='searchWords'
 						@click='clearInput'
-				></span>
+				/>
 			</div>
 
 			<div class="hot-words" v-show='!searchWords&&songList.length===0'>
@@ -27,7 +28,7 @@
 							:key='item.id'
 							@click='searchWord(item.name)'
 						>
-							<span class='suggest-icon'></span>
+							<span class='suggest-icon'/>
 							<span class='name'>{{item.name}}</span>
 						</li>
 					</ul>
@@ -50,6 +51,7 @@
 
 <script>
 	import MusicListItem from '../../../components/music-list-item/MusicListItem.vue'
+	import Loading from '../../../components/loding/Loading'
 	import {
 		reqHotSearch,
 		reqSearchSuggest,
@@ -63,10 +65,12 @@
 				hotWords: [], //热门搜索
 				suggestList: [], //搜索建议
 				songList: [], //搜索结果,歌曲列表
+				isLoading:true
 			}
 		},
 		components: {
-			MusicListItem
+			MusicListItem,
+			Loading
 		},
 		created() {
 			this.getHotSearchWords();
@@ -77,6 +81,7 @@
 				const result = await reqHotSearch();
 				if (result) {
 					this.hotWords = Object.freeze(result.result.hots.map(item => item.first));
+					this.isLoading = false;
 				}
 			},
 			searchWord(word) {

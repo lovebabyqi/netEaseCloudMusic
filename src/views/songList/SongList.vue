@@ -1,39 +1,42 @@
 <template>
-    <div class="song-list" v-if="Object.keys(playListInfo).length!==0">
-        <top-nav/>
-        <!-- header start -->
-        <song-list-header
-                :play-list-info="playListInfo"
-        />
-        <!-- header end -->
-        <!-- 标签及简介 start -->
-        <song-list-tags
-                :tags="playListInfo.tags"
-                :desc-content="playListInfo.description"
-        />
-        <!-- 标签及简介 end -->
-        <!-- 歌曲列表 start-->
-        <div class="play_list">
-            <h3 class="list-title">歌曲列表</h3>
-            <music-list-item
-                    v-for="(song,index) in showSongList"
-                    :key="song.id"
-                    :index="index+1"
-                    :songInfo="song"
-                    @click.native="goPlayer(song.id)"
+    <div class="song-list">
+        <loading v-show="isLoading"/>
+        <div v-show="!isLoading">
+            <top-nav/>
+            <!-- header start -->
+            <song-list-header
+                    :play-list-info="playListInfo"
             />
+            <!-- header end -->
+            <!-- 标签及简介 start -->
+            <song-list-tags
+                    :tags="playListInfo.tags"
+                    :desc-content="playListInfo.description"
+            />
+            <!-- 标签及简介 end -->
+            <!-- 歌曲列表 start-->
+            <div class="play_list">
+                <h3 class="list-title">歌曲列表</h3>
+                <music-list-item
+                        v-for="(song,index) in showSongList"
+                        :key="song.id"
+                        :index="index+1"
+                        :songInfo="song"
+                        @click.native="goPlayer(song.id)"
+                />
+            </div>
+            <!-- 歌曲列表 end -->
+            <!-- 精彩评论start -->
+            <div class="comment-list">
+                <h3 class="list-title">精彩评论</h3>
+                <comment-item
+                        v-for='comment in CommentList'
+                        :key='comment.CommentId'
+                        :comment='comment'/>
+                <div class="load-more" @click='loadMore'>加载更多评论...</div>
+            </div>
+            <!-- 精彩评论end -->
         </div>
-        <!-- 歌曲列表 end -->
-        <!-- 精彩评论start -->
-        <div class="comment-list">
-            <h3 class="list-title">精彩评论</h3>
-            <comment-item
-                    v-for='comment in CommentList'
-                    :key='comment.CommentId'
-                    :comment='comment'/>
-            <div class="load-more" @click='loadMore'>加载更多评论...</div>
-        </div>
-        <!-- 精彩评论end -->
     </div>
 </template>
 
@@ -45,7 +48,7 @@
     import SongListHeader from "./base/SongListHeader";
     import SongListTags from "./base/SongListTags";
     import CommentItem from '../../components/comment-item/CommentItem'
-
+    import Loading from '../../components/loding/Loading'
     export default {
         name: "SongList",
         components: {
@@ -53,7 +56,8 @@
             SongListTags,
             SongListHeader,
             CommentItem,
-            TopNav
+            TopNav,
+            Loading
         },
         data() {
             return {
@@ -62,6 +66,7 @@
                 showSongList: Array,
                 CommentList: [],
                 page: 1,//记录评论页数
+                isLoading:true
             };
         },
         mounted() {
@@ -85,6 +90,7 @@
                     };
                 });
                 this.showSongList = Object.freeze(showSongList); //不需要响应式
+                this.isLoading = false
             },
             async getSongComments() {
                 //获取歌单评论

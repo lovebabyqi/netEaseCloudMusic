@@ -1,26 +1,29 @@
 <template>
   <div class="home-push">
-    <div class="home-title">
-      <span>推荐歌单</span>
-    </div>
-    <div class="push-list">
-      <home-push-item
-        v-for="item in pushList"
-        :key="item.id"
-        :info="item"
-        @click.native="goPlayList(item.id)"
+    <loading v-show="isLoading"/>
+    <div v-show="!isLoading">
+      <div class="home-title">
+        <span>推荐歌单</span>
+      </div>
+      <div class="push-list">
+        <home-push-item
+                v-for="item in pushList"
+                :key="item.id"
+                :info="item"
+                @click.native="goPlayList(item.id)"
+        />
+      </div>
+      <div class="home-title">
+        <span>最新音乐</span>
+      </div>
+      <music-list-item
+              v-for="song in newSongList"
+              :key="song.id"
+              :songInfo="song"
+              @click.native="goPlayer(song.id)"
       />
+      <home-footer/>
     </div>
-    <div class="home-title">
-      <span>最新音乐</span>
-    </div>
-    <music-list-item
-      v-for="song in newSongList"
-      :key="song.id"
-      :songInfo="song"
-      @click.native="goPlayer(song.id)"
-    />
-    <home-footer/>
   </div>
 </template>
 
@@ -29,12 +32,14 @@ import { reqHomePush, reqHomeNewSong } from "../../../api/home";
 import HomePushItem from "./HomePushItem";
 import MusicListItem from "../../../components/music-list-item/MusicListItem";
 import HomeFooter from "./HomeFooter";
+import Loading from '../../../components/loding/Loading'
 export default {
   name: "HomePush",
   data() {
     return {
       pushList: [],
-      newSongList: []
+      newSongList: [],
+      isLoading:true
     };
   },
   created() {
@@ -56,6 +61,7 @@ export default {
         };
       });
       this.newSongList = Object.freeze(showNewSongList); //不需要响应式
+      this.isLoading = false;
     },
     goPlayer(id) {
       //播放单曲
@@ -77,7 +83,8 @@ export default {
   components: {
     HomePushItem,
     MusicListItem,
-    HomeFooter
+    HomeFooter,
+    Loading
   }
 };
 </script>
